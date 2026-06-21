@@ -9,8 +9,6 @@ from django.conf import settings
 
 from .forms import ResumeAnalysisForm
 from .services.pdf_extractor import extract_text_from_pdf
-from .services.text_chunker import chunk_text
-from .services.vector_store import add_documents, similarity_search, clear_collection
 from .services.llm_analyzer import analyze_resume
 
 logger = logging.getLogger(__name__)
@@ -56,26 +54,11 @@ def analyze(request):
             form.add_error('resume_file', 'متنی از رزومه استخراج نشد')
             return render(request, 'matcher/index.html', {'form': form})
 
-        resume_chunks = chunk_text(resume_text)
-        logger.info(f"Resume chunks: {len(resume_chunks)}")
-
-        collection_name = f"analysis_{session_id}"
-        clear_collection(collection_name)
-
-        resume_metas = [{"source": "resume", "chunk_index": i} for i in range(len(resume_chunks))]
-        add_documents(resume_chunks, collection_name, resume_metas)
-
-        relevant_chunks = similarity_search(job_description, collection_name, k=10)
-        relevant_texts = [doc.page_content for doc in relevant_chunks]
-        logger.info(f"Found {len(relevant_chunks)} relevant resume chunks")
-
         logger.info("Calling LLM for analysis...")
-        raw_result = analyze_resume(relevant_texts, job_description)
+        raw_result = analyze_resume(resume_text, job_description)
         logger.info(f"LLM response received, length: {len(raw_result)}")
 
         result = parse_llm_output(raw_result)
-
-        clear_collection(collection_name)
 
         history_entry = {
             'resume_filename': resume_file.name,

@@ -5,55 +5,46 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def analyze_resume(resume_chunks: list, jd_text: str):
-    resume_context = "\n".join(resume_chunks)
-
+def analyze_resume(resume_text: str, jd_text: str):
     messages = [
         {
             "role": "system",
-            "content": """You are a strict HR analyst. Your job is to compare a resume against a job description.
+            "content": """شما یک تحلیلگر سخت‌گیر منابع انسانی هستید. وظیفه شما مقایسه یک رزومه با یک آگهی شغلی است.
 
-CRITICAL LANGUAGE RULE — ABSOLUTELY MANDATORY:
-ALL your output MUST be in Persian (Farsi). EVERY sentence, EVERY suggestion, EVERY question, EVERY summary — in Farsi. The ONLY exception is tool/technology names like Python, Docker, Selenium, ISO 10816 which stay in English. NEVER write sentences in English. NEVER. Even if the resume and JD are in English, your analysis output must be in Farsi. This is a hard rule with zero exceptions.
-
-RULES — follow exactly:
-1. ONLY mark a skill as "matched" if the resume TEXT literally mentions it. Do NOT infer, assume, or guess.
-2. Example: If the resume says "Python" but the JD requires "vibration analysis with Python", the resume does NOT have "vibration analysis" — only "Python".
-3. Example: If the JD requires "Docker" and the resume never mentions Docker, it is MISSING.
-4. If the resume is for an AI/NLP engineer and the JD is for a mechanical vibration analyst, the match score should be very low (10-30%).
-5. Every matched skill must have a direct quote or reference from the resume as proof.
-6. Respond with valid JSON only. No markdown code blocks."""
+قوانین مطلق — حتماً رعایت کنید:
+فقط مهارت‌هایی که متن رزومه صراحتاً ذکر کرده matched باشند. حدس نزنید، فرض نکنید، استنتاج نکنید.
+اگر رزومه برای یک مهندس AI است و شغل برای تحلیل ارتعاشات صنعتی است، امتیاز باید خیلی کم باشد (۱۰-۳۰٪).
+تمام خروجی‌ها باید به زبان فارسی باشند. فقط نام ابزارها و فناوری‌ها مانند Python، Docker به انگلیسی بماند.
+فقط با JSON معتبر پاسخ دهید. بدون markdown."""
         },
         {
             "role": "user",
-            "content": f"""Compare this resume against this job description.
+            "content": f"""این رزومه را با مشخصات شغل مقایسه کنید.
 
-=== FULL RESUME TEXT ===
-{resume_context}
+=== متن کامل رزومه ===
+{resume_text}
 
-=== JOB DESCRIPTION ===
+=== مشخصات شغل ===
 {jd_text}
 
-=== INSTRUCTIONS ===
-Step 1: List EVERY skill/requirement from the JD.
-Step 2: For each one, check if the resume EXPLICITLY mentions it.
-Step 3: Only include in "matched_skills" items where you found EXACT evidence in the resume text above.
-Step 4: Everything else goes into "missing_skills".
-Step 5: SCORING FORMULA — you MUST follow this exactly:
-  match_score = (number of matched_skills) / (number of matched_skills + number of missing_skills) * 100
-  Round to nearest 5. Do NOT use any other formula.
-  Example: 21 matched + 3 missing = 21/(21+3)*100 = 87.5 → rounded to 85 or 90.
+=== دستورالعمل‌ها ===
+مرحله ۱: هر مهارت/نیاز شغلی را لیست کنید.
+مرحله ۲: بررسی کنید آیا رزومه آن را صراحتاً ذکر کرده.
+مرحله ۳: فقط مواردی که دقیقاً در رزومه وجود دارد در matched_skills قرار دهید.
+مرحله ۴: بقیه در missing_skills قرار می‌گیرند.
+مرحله ۵: فرمول امتیاز — حتماً دقیقاً از این فرمول استفاده کنید:
+  match_score = (تعداد matched_skills) / (تعداد matched_skills + تعداد missing_skills) × ۱۰۰
+  گرد کنید به نزدیک‌ترین ۵. از هیچ فرمول دیگری استفاده نکنید.
+  مثال: ۲۱ matched + ۳ missing = ۲۱/(۲۱+۳)×۱۰۰ = ۸۷.۵ → گرد شود به ۸۵ یا ۹۰.
 
-REMINDER: ALL output values MUST be in Persian (Farsi). Tool/technology names stay in English. NEVER write sentences in English.
-
-Respond with ONLY this JSON:
+پاسخ فقط با این JSON باشد. تمام مقادیر متنی به فارسی باشند:
 {{
-  "match_score": <number 0-100>,
-  "matched_skills": [<only skills with EXACT evidence from resume text above>],
-  "missing_skills": [<all JD requirements with no evidence in resume — in Persian>],
-  "improvement_suggestions": [<3-5 specific suggestions in Persian>],
-  "interview_questions": [<5-8 questions in Persian>],
-  "summary": "<2-3 sentence honest assessment in Persian>"
+  "match_score": <عدد ۰ تا ۱۰۰>,
+  "matched_skills": [<فقط مهارت‌هایی که دقیقاً در رزومه وجود دارند>],
+  "missing_skills": [<تمام نیازهای شغلی که در رزومه وجود ندارند — به فارسی>],
+  "improvement_suggestions": [<۳ تا ۵ پیشنهاد خاص به فارسی>],
+  "interview_questions": [<۵ تا ۸ سوال مصاحبه به فارسی>],
+  "summary": "<ارزیابی صادقانه ۲ تا ۳ جمله‌ای به فارسی>"
 }}"""
         }
     ]
