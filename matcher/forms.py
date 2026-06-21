@@ -9,10 +9,10 @@ class ResumeAnalysisForm(forms.Form):
         })
     )
     job_description = forms.CharField(
-        label='Job Description',
+        label='مشخصات شغل',
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 10,
-            'placeholder': 'Job Description را اینجا paste کنید...'
+            'placeholder': 'مشخصات شغل را در اینجا قرار دهید...'
         })
     )

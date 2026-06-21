@@ -1,6 +1,6 @@
 {% extends 'matcher/base.html' %}
 
-{% block title %}نتیجه تحلیل - AI Resume Matcher{% endblock %}
+{% block title %}نتیجه تحلیل - تحلیلگر هوشمند رزومه{% endblock %}
 
 {% block content %}
 <div class="py-4">
@@ -28,7 +28,7 @@
                         <div class="score-circle {% if result.match_score >= 70 %}score-high{% elif result.match_score >= 40 %}score-medium{% else %}score-low{% endif %}">
                             {{ result.match_score }}%
                         </div>
-                        <h5>Match Score</h5>
+                        <h5>امتیاز تطابق</h5>
                         <p class="text-muted mb-0">امتیاز تطابق</p>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
             <div class="card-dark p-4 mb-4">
                 <h6 class="section-title">
                     <i class="fas fa-briefcase me-2" style="color: var(--primary);"></i>
-                    Job Description
+                    مشخصات شغل
                 </h6>
                 <div style="color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap;">{{ job_description }}</div>
             </div>

@@ -1,10 +1,10 @@
 {% extends 'matcher/base.html' %}
 
-{% block title %}AI Resume Matcher - خانه{% endblock %}
+{% block title %}تحلیلگر هوشمند رزومه - خانه{% endblock %}
 
 {% block content %}
 <div class="hero-section">
-    <h1>AI Resume Matcher</h1>
+    <h1>تحلیلگر هوشمند رزومه</h1>
     <p>رزومه خود را آپلود کنید، مشخصات شغل را وارد کنید و تحلیل هوشمند دریافت کنید</p>
 </div>
 
@@ -41,7 +41,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">
-                        <i class="fas fa-briefcase me-2"></i>Job Description
+                        <i class="fas fa-briefcase me-2"></i>مشخصات شغل
                     </label>
                     {{ form.job_description }}
                 </div>
@@ -60,21 +60,21 @@
     <div class="col-lg-4 mb-3">
         <div class="card-dark p-4 text-center">
             <i class="fas fa-chart-bar fa-2x mb-3" style="color: var(--primary);"></i>
-            <h5>Match Score</h5>
+            <h5>امتیاز تطابق</h5>
             <p class="text-muted mb-0">امتیاز تطابق رزومه با شغل</p>
         </div>
     </div>
     <div class="col-lg-4 mb-3">
         <div class="card-dark p-4 text-center">
             <i class="fas fa-check-circle fa-2x mb-3" style="color: var(--accent-green);"></i>
-            <h5>Skills Analysis</h5>
+            <h5>تحلیل مهارت‌ها</h5>
             <p class="text-muted mb-0">تحلیل مهارت‌های موجود و مفقود</p>
         </div>
     </div>
     <div class="col-lg-4 mb-3">
         <div class="card-dark p-4 text-center">
             <i class="fas fa-lightbulb fa-2x mb-3" style="color: var(--accent-yellow);"></i>
-            <h5>Improvement Tips</h5>
+            <h5>پیشنهادات بهبود</h5>
             <p class="text-muted mb-0">پیشنهادات بهبود رزومه</p>
         </div>
     </div>
