@@ -9,31 +9,24 @@
 - **تحلیل شکاف‌ها** - شناسایی مهارت‌های مفقود و حوزه‌های ضعف
 - **پیشنهادات بهبود** - راهکارهای عملی برای تقویت رزومه
 - **سوالات مصاحبه** - تولید سوالات مرتبط بر اساس مشخصات شغل
-- **امتیاز تطابق** - سنجش دقیق میزان هماهنگی رزومه با شغل (محاسبه خودکار بر اساس مهارت‌ها)
+- **امتیاز تطابق** - سنجش دقیق میزان هماهنگی رزومه با شغل (محاسبه خودکار بر اساس نسبت مهارت‌ها)
 - **تاریخچه مبتنی بر نشست** - تاریخچه تحلیل هر کاربر فقط در مرورگر خودش ذخیره می‌شود
 - **خروجی به زبان فارسی** - تمام نتایج تحلیل به زبان فارسی ارائه می‌شود
-- **پشتیبانی از محیط‌های مختلف** - کار هم به صورت محلی (local) و هم روی سرورهای ابری
+- **رابط کاربری فارسی** - تمام متون و راهنماها به زبان فارسی
 
 ## فناوری‌های استفاده شده
 
 - **بک‌اند**: Django 5.x
-- **هوش مصنوعی**:
-  - Hugging Face Inference API (Qwen/Qwen3-8B) برای تحلیل رزومه
-  - LangChain برای پردازش متن و تقسیم بخش‌ها
-  - Sentence Transformers برای تبدیل متن به بردار (به صورت محلی یا از طریق API)
-- **پایگاه داده برداری**: ChromaDB برای جستجوی هوشمند بخش‌های مرتبط رزومه
+- **هوش مصنوعی**: Hugging Face Inference API (Qwen/Qwen3-8B) برای تحلیل رزومه
 - **پردازش PDF**: PyMuPDF برای استخراج متن از فایل‌های PDF
 
 ## نحوه کار
 
 1. **آپلود رزومه**: کاربر فایل PDF رزومه را آپلود می‌کند
 2. **استخراج متن**: PyMuPDF متن فایل را استخراج می‌کند
-3. **تقسیم متن**: LangChain متن را به بخش‌های کوچکتر تقسیم می‌کند
-4. **ایجاد بردارها**: Sentence Transformers بخش‌ها را به بردار تبدیل می‌کند
-5. **جستجوی برداری**: ChromaDB مرتبط‌ترین بخش‌های رزومه را با مشخصات شغل پیدا می‌کند
-6. **تحلیل هوش مصنوعی**: مدل زبانی Qwen3-8B بخش‌های مرتبط را با نیازهای شغل مقایسه می‌کند
-7. **محاسبه امتیاز**: امتیاز تطابق بر اساس نسبت مهارت‌های موجود به مفقود محاسبه می‌شود
-8. **تولید گزارش**: نتایج شامل امتیاز، تحلیل مهارت‌ها و پیشنهادات به زبان فارسی است
+3. **تحلیل هوش مصنوعی**: متن رزومه و مشخصات شغل مستقیماً به مدل Qwen3-8B ارسال می‌شود
+4. **محاسبه امتیاز**: امتیاز تطابق بر اساس نسبت مهارت‌های موجود به مفقود محاسبه می‌شود
+5. **تولید گزارش**: نتایج شامل امتیاز، تحلیل مهارت‌ها و پیشنهادات به زبان فارسی است
 
 ## نصب و راه‌اندازی
 
@@ -93,7 +86,21 @@ python manage.py runserver
 
 ## استقرار روی PythonAnywhere
 
-1. فایل `.env` را با مقادیر زیر بسازید:
+1. کلون کردن پروژه و ایجاد محیط مجازی:
+```bash
+git clone https://github.com/Thrymheim/AI-Resume-Matcher.git
+cd AI-Resume-Matcher
+mkvirtualenv --python=/usr/bin/python3.12 venv
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+2. ایجاد فایل `.env`:
+```bash
+nano ~/AI-Resume-Matcher/.env
+```
+محتوا:
 ```
 SECRET_KEY=your-random-secret-key
 DEBUG=False
@@ -105,20 +112,27 @@ CHUNK_SIZE=500
 CHUNK_OVERLAP=50
 ```
 
-2. از تب Web، فایل WGI را ویرایش کنید:
+3. از تب Web، مسیر WSGI را تنظیم کنید:
 ```python
 import os, sys
 project_home = '/home/yourusername/AI-Resume-Matcher'
 if project_home not in sys.path:
-    sys.path.insert(0, project_home)
+    sys.path.append(project_home)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'ai_resume_matcher.settings'
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 ```
 
-3. Static files را تنظیم کنید:
+4. Virtualenv را تنظیم کنید:
+```
+/home/yourusername/.virtualenvs/venv
+```
+
+5. Static files را تنظیم کنید:
 - URL: `/static/`
 - Directory: `/home/yourusername/AI-Resume-Matcher/staticfiles`
+
+6. Reload کنید.
 
 ## استقرار با Docker
 
@@ -148,6 +162,5 @@ CMD ["gunicorn", "ai_resume_matcher.wsgi:application", "--bind", "0.0.0.0:8000"]
 ## سپاسگزاری
 
 - [Hugging Face](https://huggingface.co) برای مدل‌های هوش مصنوعی
-- [LangChain](https://langchain.com) برای orchestration هوش مصنوعی
-- [ChromaDB](https://www.trychroma.com) برای ذخیره‌سازی برداری
 - [Django](https://www.djangoproject.com) برای فریمورک وب
+- [PyMuPDF](https://pymupdf.readthedocs.io) برای پردازش PDF
