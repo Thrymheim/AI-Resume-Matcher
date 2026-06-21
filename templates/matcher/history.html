@@ -1,0 +1,80 @@
+{% extends 'matcher/base.html' %}
+
+{% block title %}تاریخچه تحلیل‌ها - AI Resume Matcher{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>
+            <i class="fas fa-history me-2" style="color: var(--primary);"></i>
+            تاریخچه تحلیل‌ها
+        </h4>
+        <a href="{% url 'matcher:index' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>تحلیل جدید
+        </a>
+    </div>
+
+    {% if results %}
+    <div class="row">
+        {% for result in results %}
+        <div class="col-md-6 mb-3">
+            <div class="card-dark p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="mb-1">
+                            <i class="fas fa-file-pdf me-2" style="color: var(--accent-red);"></i>
+                            {{ result.resume_filename }}
+                        </h6>
+                        <small class="text-muted">{{ result.job_description }}</small>
+                    </div>
+                    <div class="score-circle-sm {% if result.match_score >= 70 %}score-high{% elif result.match_score >= 40 %}score-medium{% else %}score-low{% endif %}">
+                        {{ result.match_score }}%
+                    </div>
+                </div>
+                <hr style="border-color: rgba(99,102,241,0.15);">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <small class="text-muted d-block">مهارت‌های موجود</small>
+                        <strong style="color: var(--accent-green);">{{ result.matched_skills|length }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">مهارت‌های مفقود</small>
+                        <strong style="color: var(--accent-red);">{{ result.missing_skills|length }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">سوالات مصاحبه</small>
+                        <strong style="color: var(--primary);">{{ result.interview_questions|length }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card-dark p-5 text-center">
+        <i class="fas fa-inbox fa-3x mb-3" style="color: var(--text-secondary);"></i>
+        <h5>هنوز تحلیلی انجام نشده</h5>
+        <a href="{% url 'matcher:index' %}" class="btn btn-primary mt-3">
+            <i class="fas fa-plus me-2"></i>شروع تحلیل
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .score-circle-sm {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}

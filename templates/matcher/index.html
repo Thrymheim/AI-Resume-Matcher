@@ -1,0 +1,118 @@
+{% extends 'matcher/base.html' %}
+
+{% block title %}AI Resume Matcher - خانه{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1>AI Resume Matcher</h1>
+    <p>رزومه خود را آپلود کنید، مشخصات شغل را وارد کنید و تحلیل هوشمند دریافت کنید</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-dark p-4">
+            <form method="post" action="{% url 'matcher:analyze' %}" enctype="multipart/form-data" id="analysisForm">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger" style="background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5;">
+                    {% for error in form.non_field_errors %}
+                        <p class="mb-0">{{ error }}</p>
+                    {% endfor %}
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-file-pdf me-2"></i>فایل رزومه (PDF)
+                    </label>
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt d-block" id="uploadIcon" style="font-size:2.5rem;color:#6366f1;margin-bottom:10px;"></i>
+                        <p class="mb-1" id="uploadFileName">فایل PDF را اینجا بکشید یا کلیک کنید</p>
+                        <small class="text-muted">حداکثر 10 مگابایت</small>
+                        {{ form.resume_file }}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-briefcase me-2"></i>Job Description
+                    </label>
+                    {{ form.job_description }}
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <i class="fas fa-search me-2"></i>تحلیل رزومه
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 justify-content-center">
+    <div class="col-lg-4 mb-3">
+        <div class="card-dark p-4 text-center">
+            <i class="fas fa-chart-bar fa-2x mb-3" style="color: var(--primary);"></i>
+            <h5>Match Score</h5>
+            <p class="text-muted mb-0">امتیاز تطابق رزومه با شغل</p>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-3">
+        <div class="card-dark p-4 text-center">
+            <i class="fas fa-check-circle fa-2x mb-3" style="color: var(--accent-green);"></i>
+            <h5>Skills Analysis</h5>
+            <p class="text-muted mb-0">تحلیل مهارت‌های موجود و مفقود</p>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-3">
+        <div class="card-dark p-4 text-center">
+            <i class="fas fa-lightbulb fa-2x mb-3" style="color: var(--accent-yellow);"></i>
+            <h5>Improvement Tips</h5>
+            <p class="text-muted mb-0">پیشنهادات بهبود رزومه</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.querySelector('input[type="file"]');
+    const form = document.getElementById('analysisForm');
+    const loading = document.getElementById('loading');
+
+    fileInput.style.display = 'none';
+
+    uploadZone.addEventListener('click', (e) => {
+        if (e.target === fileInput) return;
+        fileInput.click();
+    });
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.style.borderColor = '#6366f1'; });
+    uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = 'rgba(99,102,241,0.3)'; });
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.style.borderColor = 'rgba(99,102,241,0.3)';
+        fileInput.files = e.dataTransfer.files;
+        updateUploadText();
+    });
+
+    fileInput.addEventListener('change', updateUploadText);
+
+    function updateUploadText() {
+        const fileNameEl = document.getElementById('uploadFileName');
+        if (fileInput.files.length > 0 && fileNameEl) {
+            fileNameEl.textContent = fileInput.files[0].name;
+            document.getElementById('uploadIcon').className = 'fas fa-file-pdf d-block';
+        }
+    }
+
+    form.addEventListener('submit', () => { loading.classList.add('active'); });
+</script>
+{% endblock %}

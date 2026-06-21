@@ -1,0 +1,123 @@
+{% extends 'matcher/base.html' %}
+
+{% block title %}نتیجه تحلیل - AI Resume Matcher{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="text-center mb-4">
+        <a href="{% url 'matcher:index' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-right me-2"></i>تحلیل جدید
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card-dark p-4 mb-4">
+                <h4 class="mb-3">
+                    <i class="fas fa-file-alt me-2" style="color: var(--primary);"></i>
+                    نتیجه تحلیل رزومه
+                </h4>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-file me-1"></i>{{ resume_filename }}
+                </p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card-dark p-4 text-center">
+                        <div class="score-circle {% if result.match_score >= 70 %}score-high{% elif result.match_score >= 40 %}score-medium{% else %}score-low{% endif %}">
+                            {{ result.match_score }}%
+                        </div>
+                        <h5>Match Score</h5>
+                        <p class="text-muted mb-0">امتیاز تطابق</p>
+                    </div>
+                </div>
+
+                <div class="col-md-8 mb-4">
+                    <div class="card-dark p-4">
+                        <h6 class="section-title">
+                            <i class="fas fa-file-medical me-2" style="color: var(--primary);"></i>
+                            خلاصه
+                        </h6>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">
+                            {{ result.summary }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card-dark p-4">
+                        <h6 class="section-title" style="color: var(--accent-green);">
+                            <i class="fas fa-check-circle me-2"></i>
+                            مهارت‌های موجود ({{ result.matched_skills|length }})
+                        </h6>
+                        <div>
+                            {% for skill in result.matched_skills %}
+                            <span class="skill-tag skill-matched">{{ skill }}</span>
+                            {% empty %}
+                            <p class="text-muted">مهارتی یافت نشد</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card-dark p-4">
+                        <h6 class="section-title" style="color: var(--accent-red);">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            مهارت‌های مفقود ({{ result.missing_skills|length }})
+                        </h6>
+                        <div>
+                            {% for skill in result.missing_skills %}
+                            <span class="skill-tag skill-missing">{{ skill }}</span>
+                            {% empty %}
+                            <p class="text-muted">مهارت مفقودی یافت نشد</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-dark p-4 mb-4">
+                <h6 class="section-title">
+                    <i class="fas fa-lightbulb me-2" style="color: var(--accent-yellow);"></i>
+                    پیشنهادات بهبود رزومه
+                </h6>
+                {% for suggestion in result.improvement_suggestions %}
+                <div class="list-item">
+                    <i class="fas fa-arrow-left me-2" style="color: var(--primary);"></i>
+                    {{ suggestion }}
+                </div>
+                {% empty %}
+                <p class="text-muted">پیشنهادی یافت نشد</p>
+                {% endfor %}
+            </div>
+
+            <div class="card-dark p-4 mb-4">
+                <h6 class="section-title">
+                    <i class="fas fa-question-circle me-2" style="color: var(--primary);"></i>
+                    سوالات احتمالی مصاحبه
+                </h6>
+                {% for question in result.interview_questions %}
+                <div class="list-item">
+                    <span style="color: var(--primary); font-weight: 700;">{{ forloop.counter }}.</span>
+                    {{ question }}
+                </div>
+                {% empty %}
+                <p class="text-muted">سوالی یافت نشد</p>
+                {% endfor %}
+            </div>
+
+            <div class="card-dark p-4 mb-4">
+                <h6 class="section-title">
+                    <i class="fas fa-briefcase me-2" style="color: var(--primary);"></i>
+                    Job Description
+                </h6>
+                <div style="color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap;">{{ job_description }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
