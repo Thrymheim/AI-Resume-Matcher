@@ -58,49 +58,6 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## متغیرهای محیطی
-
-| متغیر | توضیحات | مقدار پیش‌فرض |
-|--------|---------|---------------|
-| `SECRET_KEY` | کلید مخفی Django | در تولید الزامی |
-| `DEBUG` | حالت اشکال‌زدایی | `True` |
-| `ALLOWED_HOSTS` | میزبان‌های مجاز (جدا شده با کاما) | `localhost,127.0.0.1` |
-| `HUGGINGFACEHUB_API_TOKEN` | توکن API هوگینگ فیس | الزامی |
-| `EMBEDDING_MODEL` | مدل تبدیل متن به بردار | `all-MiniLM-L6-v2` |
-| `LLM_MODEL` | مدل زبانی برای تحلیل | `Qwen/Qwen3-8B` |
-
-## استقرار
-
-### تنظیمات تولید
-
-1. مقدار `DEBUG=False` را در فایل `.env` تنظیم کنید
-2. یک `SECRET_KEY` امن تولید کنید
-3. `ALLOWED_HOSTS` را برای دامنه خود پیکربندی کنید
-4. از سرور WSGI تولیدی استفاده کنید:
-```bash
-pip install gunicorn
-gunicorn ai_resume_matcher.wsgi:application
-```
-
-### داکر (اختیاری)
-
-```dockerfile
-FROM python:3.12-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-RUN python manage.py collectstatic --noinput
-RUN python manage.py migrate
-
-EXPOSE 8000
-
-CMD ["gunicorn", "ai_resume_matcher.wsgi:application", "--bind", "0.0.0.0:8000"]
-```
 
 ## نحوه کار
 
@@ -118,13 +75,3 @@ CMD ["gunicorn", "ai_resume_matcher.wsgi:application", "--bind", "0.0.0.0:8000"]
 - هیچ داده‌ای بین کاربران به اشتراک گذاشته نمی‌شود
 - فایل‌های رزومه بلافاصله پس از پردازش حذف می‌شوند
 - هیچ ذخیره‌سازی دائمی از رزومه‌های کاربران انجام نمی‌شود
-
-## مجوز
-
-مجوز MIT - آزادانه از این پروژه استفاده و آن را تغییر دهید.
-
-## سپاسگزاری
-
-- Hugging Face برای مدل‌های هوش مصنوعی
-- LangChain برای orchestration هوش مصنوعی
-- ChromaDB برای ذخیره‌سازی برداری
