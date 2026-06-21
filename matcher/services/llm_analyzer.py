@@ -36,10 +36,13 @@ RULES — follow exactly:
 
 === INSTRUCTIONS ===
 Step 1: List EVERY skill/requirement from the JD.
-Step 2: For each one, check if the resume EXPLICITLY mentions it. Quote the exact text if yes.
+Step 2: For each one, check if the resume EXPLICITLY mentions it.
 Step 3: Only include in "matched_skills" items where you found EXACT evidence in the resume text above.
 Step 4: Everything else goes into "missing_skills".
-Step 5: Calculate match_score = (matched / total JD requirements) * 100, rounded to nearest 5.
+Step 5: SCORING FORMULA — you MUST follow this exactly:
+  match_score = (number of matched_skills) / (number of matched_skills + number of missing_skills) * 100
+  Round to nearest 5. Do NOT use any other formula.
+  Example: 21 matched + 3 missing = 21/(21+3)*100 = 87.5 → rounded to 85 or 90.
 
 REMINDER: ALL output values MUST be in Persian (Farsi). Tool/technology names stay in English. NEVER write sentences in English.
 

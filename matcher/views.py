@@ -111,7 +111,17 @@ def parse_llm_output(raw: str) -> dict:
     try:
         json_match = re.search(r'\{[\s\S]*\}', raw)
         if json_match:
-            return json.loads(json_match.group())
+            result = json.loads(json_match.group())
+
+            matched = len(result.get('matched_skills', []))
+            missing = len(result.get('missing_skills', []))
+            total = matched + missing
+
+            if total > 0:
+                correct_score = round((matched / total) * 100 / 5) * 5
+                result['match_score'] = max(5, min(95, correct_score))
+
+            return result
     except json.JSONDecodeError:
         pass
 
