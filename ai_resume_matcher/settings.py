@@ -70,7 +70,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 3600 * 24
 
-EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
+EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'BAAI/bge-small-en-v1.5')
 LLM_MODEL = os.getenv('LLM_MODEL', 'Qwen/Qwen3-8B')
 CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', '500'))
 CHUNK_OVERLAP = int(os.getenv('CHUNK_OVERLAP', '50'))
