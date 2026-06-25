@@ -41,14 +41,14 @@ def analyze_resume(resume_text: str, jd_text: str):
     token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
     if token == "your-token-here":
         token = None
-    client = InferenceClient(token=token, timeout=50)
+    client = InferenceClient(token=token)
 
     model = "Qwen/Qwen3-8B"
     logger.info(f"Calling LLM model: {model}")
     result = client.chat_completion(
         messages=messages,
         model=model,
-        max_tokens=2048,
+        max_tokens=4096,
         temperature=0.1,
         top_p=0.9
     )
